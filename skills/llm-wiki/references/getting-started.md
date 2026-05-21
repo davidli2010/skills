@@ -27,6 +27,7 @@ touch wiki/index.md wiki/log.md
 - 文件命名约定（如 `entity-xxx.md`、`concept-xxx.md`）
 - 偏好的工作流程（全程参与 vs. 批量处理）
 - 页面模板定义（详见 `schema-design.md`）
+- 操作规则（详见 `schema-design.md` 的"Schema 必须包含的操作规则"章节）
 
 > **文件命名**：如果当前使用的 agent 平台是 Claude 的产品（Claude Code、Claude.ai 等），Schema 文件命名为 `CLAUDE.md`；如果是其它 agent 平台（如 OpenCode、Cursor、Windsurf 等），命名为 `AGENTS.md`。两者内容和作用完全相同。
 
