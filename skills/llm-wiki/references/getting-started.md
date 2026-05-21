@@ -21,12 +21,14 @@ touch wiki/index.md wiki/log.md
 在 `wiki/index.md` 中写入分类标题框架（实体、概念、来源摘要、分析）。在 `wiki/log.md` 中写入创建记录。格式详见 `indexing.md`。
 
 ### 第四步：起草 Schema
-创建 `CLAUDE.md`（或等效配置文件），包含：
+创建 Schema 配置文件，包含：
 - 用户的领域和研究方向
 - 适合其场景的页面类型
 - 文件命名约定（如 `entity-xxx.md`、`concept-xxx.md`）
 - 偏好的工作流程（全程参与 vs. 批量处理）
 - 页面模板定义（详见 `schema-design.md`）
+
+> **文件命名**：如果当前使用的 agent 平台是 Claude 的产品（Claude Code、Claude.ai 等），Schema 文件命名为 `CLAUDE.md`；如果是其它 agent 平台（如 OpenCode、Cursor、Windsurf 等），命名为 `AGENTS.md`。两者内容和作用完全相同。
 
 ### 第五步：校准期（前 5-10 个来源）
 - 与 LLM 一起逐个摄入来源，全程参与

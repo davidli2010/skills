@@ -18,7 +18,7 @@ description: >
 |------|--------|------|
 | **原始资料** `raw/` | 人类（不可变） | 文章、论文、图片、笔记等源文档，LLM 只读不写 |
 | **Wiki** `wiki/` | LLM（持久化） | 摘要页、实体页、概念页、对比分析页、索引和日志 |
-| **Schema** `CLAUDE.md` | 人类与 LLM 协同 | 结构规则、命名约定、页面模板、工作流定义 |
+| **Schema** 配置文件 | 人类与 LLM 协同 | 结构规则、命名约定、页面模板、工作流定义 |
 | **产出物** `output/` | LLM 生成 | 报告、幻灯片、图表等交付物，与 wiki 知识页面分离 |
 
 ```
@@ -29,8 +29,10 @@ project/
     index.md              # 内容目录
     log.md                # 操作日志
   output/                 # 产出物（报告、幻灯片等交付物）
-  CLAUDE.md               # Schema（或等效配置文件）
+  CLAUDE.md / AGENTS.md   # Schema 配置文件（见下方说明）
 ```
+
+> **Schema 文件命名约定**：Schema 文件的名称取决于使用的 agent 平台。仅当 agent 平台是 Claude 的产品（Claude Code、Claude.ai 等）时，使用 `CLAUDE.md`；在其它 agent 平台（如 OpenCode、Cursor、Windsurf 等）上，使用 `AGENTS.md`。文件内容和作用完全相同，只是文件名不同。
 
 ---
 
