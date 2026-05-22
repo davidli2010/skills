@@ -13,6 +13,78 @@
 
 ---
 
+## Assets 使用指南
+
+`raw/assets/` 用于存放原始资料中引用的图片、PDF 附件等二进制文件。以下是完整的使用规范。
+
+### 文件来源
+
+- Obsidian Web Clipper 剪藏后，通过"下载附件"功能自动保存到 `raw/assets/`
+- 手动下载的截图、图表、PDF 等也放入此目录
+- 用户手动拖入的参考图片
+
+### 命名约定
+
+采用 `来源标识-描述性名称.扩展名` 格式，保证可追溯：
+
+```
+raw/assets/
+  article-title-fig1-architecture.png
+  paper-name-table2.png
+  competitor-a-pricing-screenshot-2026q1.png
+  manual-sketch-system-design.jpg
+```
+
+如果文件由 Obsidian Web Clipper 自动下载，保留其原始文件名即可（通常为 URL hash 或原文件名）。
+
+### 在 wiki 页面中引用
+
+wiki 页面使用**相对路径**引用 assets 中的图片：
+
+```markdown
+<!-- 从 wiki/ 目录引用 raw/assets/ 中的图片 -->
+![架构图](../raw/assets/article-title-fig1-architecture.png)
+```
+
+如果使用 Obsidian 的 wiki 链接语法：
+
+```markdown
+![[article-title-fig1-architecture.png]]
+```
+
+> 使用 Obsidian wiki 链接语法时，需要在 Obsidian 设置中确认附件目录指向 `raw/assets/`，Obsidian 会自动解析路径。
+
+### 摄入时的图片处理流程
+
+LLM 在摄入含图片的资料时，按以下步骤处理：
+
+1. **先读文本内容**，理解整体结构和上下文
+2. **逐个查看引用的图片**（如架构图、数据表格截图等），提取额外信息
+3. **在摘要页中用文字描述图片关键内容**，同时保留图片引用链接
+4. **对于关键图片**（架构图、流程图等），在 wiki 页面中同时保留：
+   - 图片引用（供人类阅读）
+   - 文字描述（供 LLM 未来查询时无需重新读取图片）
+
+示例：
+
+```markdown
+## 系统架构
+
+![系统架构图](../raw/assets/source-article-architecture.png)
+
+> 图片描述：三层架构，前端（React）→ API 网关（Kong）→ 微服务集群（Go），
+> 数据层使用 PostgreSQL + Redis。服务间通过 gRPC 通信。
+```
+
+### 注意事项
+
+- **LLM 绝不修改 `raw/assets/` 中的文件**——与 `raw/` 的其它内容一样，assets 是不可变的
+- **外链图片应尽早本地化**——网络图片 URL 随时可能失效，剪藏后立即下载附件
+- **大文件考虑体积**——视频、大型 PDF 等可以只在 wiki 中记录外部链接，不必下载到本地
+- **git 管理**——如果仓库中 assets 体积过大，考虑使用 `.gitignore` 排除或使用 Git LFS
+
+---
+
 ## 交叉引用原则
 
 这是维护 wiki 质量的关键，每次摄入和更新时都要遵守：
