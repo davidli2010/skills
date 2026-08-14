@@ -1,6 +1,8 @@
 # 快速上手与扩展指南
 
 > **触发条件**：当用户说"创建知识库"、"初始化 wiki"、"搭建 wiki"、"从零开始"时，执行以下流程。
+>
+> **OKF 对齐**：初始化产出的 wiki 遵循 OKF v0.2，`wiki/` 即 OKF bundle root。
 
 ## 快速上手清单
 
@@ -13,18 +15,19 @@
 
 ### 第二步：创建目录结构
 ```
-mkdir -p raw/assets wiki output
+mkdir -p raw/assets wiki/{entities,concepts,sources,comparisons,playbooks} output
 touch wiki/index.md wiki/log.md
 ```
 
 ### 第三步：初始化索引和日志
-在 `wiki/index.md` 中写入分类标题框架（实体、概念、来源摘要、分析）。在 `wiki/log.md` 中写入创建记录。格式详见 `indexing.md`。
+- 在 `wiki/index.md` 顶部写入 `okf_version: "0.2"` frontmatter，正文写入分类标题框架（实体、概念、来源摘要、对比与分析、工作流）。格式详见 `indexing.md`。
+- 在 `wiki/log.md` 中写入创建记录（`## YYYY-MM-DD` + `**init**`）。
 
 ### 第四步：起草 Schema
 创建 Schema 配置文件，包含：
 - 用户的领域和研究方向
-- 适合其场景的页面类型
-- 文件命名约定（如 `entity-xxx.md`、`concept-xxx.md`）
+- 适合其场景的页面类型（`type` 值，如 `Entity`/`Concept`/`Source Summary`/`Comparison`/`Playbook`）
+- 文件命名约定与目录（详见 `schema-design.md`）
 - 偏好的工作流程（全程参与 vs. 批量处理）
 - 页面模板定义（详见 `schema-design.md`）
 - 操作规则（详见 `schema-design.md` 的"Schema 必须包含的操作规则"章节）
@@ -34,6 +37,7 @@ touch wiki/index.md wiki/log.md
 ### 第五步：校准期（前 5-10 个来源）
 - 与 LLM 一起逐个摄入来源，全程参与
 - 阅读 LLM 写的摘要，检查更新质量
+- 在人工确认的页面上补 `verified: { by: "human:<id>", at: ... }`（校准期是天然的信任建立时机）
 - 根据实际效果调整 schema
 - 确定检查频率（每周一次或每 N 次摄入后一次）
 
@@ -49,7 +53,7 @@ touch wiki/index.md wiki/log.md
 | 中 | 100-500 | `index.md` + 搜索工具 | 推荐 [qmd](https://github.com/tobi/qmd)，支持 BM25/向量混合搜索，提供 CLI 和 MCP server |
 | 大 | 500+ | 分层索引 + 搜索工具 | 每个分类一个子索引，更激进的摘要策略 |
 
-Wiki 本质上就是一个 Markdown 文件的 git 仓库，天然具备版本历史、分支和协作能力。
+Wiki 本质上就是一个 Markdown 文件的 git 仓库，天然具备版本历史、分支和协作能力。作为 OKF bundle，它可被任何遵循 OKF 的消费者读取和交换。
 
 ---
 
@@ -79,5 +83,5 @@ Wiki 本质上就是一个 Markdown 文件的 git 仓库，天然具备版本历
 
 - **对模型能力有要求** — 方法论默认使用顶级模型（Claude、GPT-4 级别），小模型效果可能打折扣。
 - **冷启动需耐心** — 前 5-10 篇资料需要深度参与，不是"丢进去就能用"的东西。
-- **验证成本不可忽视** — LLM 会在不引用来源的情况下做综合。用于严肃研究或商业决策时，抽查验证的时间要算进去。
+- **验证成本不可忽视** — LLM 会在不引用来源的情况下做综合。用于严肃研究或商业决策时，抽查验证的时间要算进去。用 OKF 的 `verified` 记录人工确认，形成信任痕迹。
 - **规模上限待探索** — 当前验证规模约 100 篇文章、40 万字。更大规模的表现尚未充分验证。
