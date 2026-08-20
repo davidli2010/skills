@@ -1,6 +1,6 @@
 ---
 name: llm-wiki
-version: 0.2.0
+version: 0.2.1
 description: >
   基于 Andrej Karpathy 的 LLM Knowledge Bases 模式，指导构建和维护个人知识库的方法论。生成的 wiki 遵循 Open Knowledge Format (OKF) v0.2 规范，使知识语料具备可溯源（provenance）、可信任（trust）、可判新（freshness）、可管理生命周期（lifecycle）的能力。当用户想要创建、维护或操作 LLM 驱动的 wiki/知识库时使用此技能。适用场景包括：构建 wiki、知识库管理、摄入文章/论文/笔记、组织研究资料、创建个人百科、LLM 辅助的结构化笔记，以及任何涉及将文档增量编译为互相链接的 Markdown 文件的场景。当用户询问 LLM Wiki 的摄入(ingest)、查询(query)、检查(lint)或 schema 设计等工作流时，也应使用此技能。
 ---

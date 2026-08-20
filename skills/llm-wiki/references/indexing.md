@@ -13,7 +13,7 @@
 - bundle root 的 `index.md` 可以且应当带 frontmatter 声明版本；子目录 `index.md` 无 frontmatter。
 - 正文按分类分节，每个条目为 `* [Title](relative-url) - description`（OKF §8 示例格式：`*` bullet + `-` 分隔符）：
   - `Title` 取被链页面 frontmatter `title`；
-  - `url` 用**相对路径**（相对 index.md 所在目录，如 `entities/karpathy.md`）；注意与正文互链不同——正文互链用 bundle-relative `/xxx.md`，index 条目按 OKF §8 用相对 URL；
+- `url` 用**相对路径**（相对 index.md 所在目录，如 `entities/karpathy.md`）；正文互链也使用相对于其所在页面的路径，以兼容普通 Markdown 渲染器；
   - description **取自被链页面 frontmatter `description`**，禁止手写第二套摘要。
 - 条目还可附标签、来源数量等元数据。
 

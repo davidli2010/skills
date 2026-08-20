@@ -21,7 +21,7 @@
 - 避免过长文件名，保持简洁可辨识
 - 实体名用英文（便于跨系统兼容），中文概念取意译
 
-概念 ID = bundle 内文件路径去掉 `.md` 后缀（如 `/concepts/llm-wiki.md` 的概念 ID 是 `concepts/llm-wiki`）。**位置即身份**，因此移动文件会改变 ID，应同步更新所有入链。
+概念 ID = bundle 内文件路径去掉 `.md` 后缀（如 `concepts/llm-wiki.md` 的概念 ID 是 `concepts/llm-wiki`）。**位置即身份**，因此移动文件会改变 ID，应同步更新所有入链。
 
 每个子目录可带自己的 `index.md`，构成分层渐进披露（OKF §8 允许任意层级 index）。
 
@@ -43,25 +43,25 @@
 
 ## 链接与路径（OKF §6）
 
-`wiki/` 内的交叉引用使用 **标准 Markdown 链接**，统一采用 **bundle-relative 绝对路径**（以 `/` 开头，根为 `wiki/`）——这是 OKF §6.1 推荐形式，文档在子目录内移动时不失效：
+`wiki/` 内的交叉引用使用 **标准 Markdown 相对链接**，路径相对于当前页面所在目录。不要以 `/` 开头：普通 Markdown 渲染器会将其解析为站点或文件系统根，而不是 `wiki/` 根。移动页面时必须同步更新其入链和出链：
 
 ```markdown
 # 概念页正文
-参见 [RAG](/concepts/rag.md) 了解对比。
+参见 [RAG](../concepts/rag.md) 了解对比。
 
 # 来源摘要页引用图片（跨 bundle，相对路径）
 ![架构图](../raw/assets/article-fig1.png)
 ```
 
 链接规则：
-- wiki 内互链：`[显示名称](/目录/文件名.md)`，LLM 将 `/` 解释为 `wiki/` bundle 根。
+- wiki 内互链：使用相对于当前页面的路径，如来源摘要页链接概念页时写作 `[显示名称](../concepts/文件名.md)`；同目录页面写作 `[显示名称](文件名.md)`。
 - 引用 bundle 外文件（`raw/`、`output/`）：相对路径，如 `../raw/xxx.md`（OKF §6.2 允许）。
 - **断链不是错误**（OKF §6.1）：链接目标不存在可能只是"尚未写出的知识"，不得因断链拒绝消费。lint 中区分"指向已删页面的断链"（应修复）与"指向未建成概念的断链"（应建议建页）。
 - 链接是**未类型化的有向边**：关系种类（父子、引用、相关）由正文措辞传达，不在链接上编码。
 
 **Path 型字段**（`resource`、`sources[].resource`）统一接受三种形式（OKF §6.2）：
 - 绝对 URL：`https://...`
-- bundle-relative 路径：`/concepts/xxx.md`
+- bundle-relative 路径：`/concepts/xxx.md`（OKF 允许；仅用于机器消费或已配置 bundle 根解析的工具）
 - 相对路径：`../computations/revenue.md`
 
 `sources[].resource` 有一个例外：可以是**作用域描述符**（描述一个群体/范围而非具体文件，如"某项目 BQ 中的全部查询"），它不是路径。
@@ -312,7 +312,7 @@ Karpathy 提出 wiki 的核心是"编译"而非"检索"。[^karpathy-gist]
 
 ### Provenance（§5.1）
 
-- `sources[]`：每个条目内 `resource` 必填，可指向 URL、bundle 内路径（如 `/concepts/xxx.md`）、相对路径或作用域描述符；`id` 为稳定键，供 footnote 归因（正文引用时建议有）；`author`、`usage_count`、`last_modified` 是**来源可信信号**（记录信号不记录评分，可信度由消费者推断）。
+- `sources[]`：每个条目内 `resource` 必填，可指向 URL、bundle 内路径（如 `/concepts/xxx.md`）、相对路径或作用域描述符；本地资源优先使用相对路径以兼容通用工具。`id` 为稳定键，供 footnote 归因（正文引用时建议有）；`author`、`usage_count`、`last_modified` 是**来源可信信号**（记录信号不记录评分，可信度由消费者推断）。
 - **来源分层/递归**：当 `sources[].resource` 指向 bundle 内另一个概念时，该概念自身也有 `sources`——派生边已存在于链接图中，消费者可递归读取、让可信度传播。外部叶子来源只携带其自身信号。
 - **`usage_count` 的解读**（OKF §5.1）：它是粗糙信号，只适合"存活 vs 消亡"、数量级比较、以及该来源自身随时间的变化——不能当作跨类型精确排名（定时任务的执行次数与人工 Dashboard 浏览权值不同）。写入时可参考来源的实际使用情况。
 - `usage_window`：与 `sources` 平级，框定 `usage_count` 的时间范围；单个条目可携带自己的 `usage_window` 覆盖共享值。
@@ -389,7 +389,7 @@ sources:
 7. `verified` 裸 mapping 视为单元素列表，无需改写成列表（§5.2）。
 8. `status` 缺省即 `stable`（§5.4）；`stale_after` 用绝对日期 `YYYY-MM-DD`，使过期判断是纯日期比较（§5.5）。
 9. 优先维护 `title` / `description` / `resource` / `tags`；空 `description` 会让 index 条目无摘要可用（§4.1、§8）。
-10. 站内交叉链接优先用 bundle-relative 绝对路径 `/xxx/yyy.md`（§6.1）。
+10. 站内 Markdown 交叉链接使用相对于当前页面的路径，且不得以 `/` 开头；移动页面后同步更新链接。
 11. 信任层级与 stale 判断只从规范定义的字段推导，不使用 `confidence` 等评分字段（§5、§5.3）。
 
 **不得拒收 / 不得误报**（§11 后半段）：
@@ -484,10 +484,10 @@ stale_after: 2027-01-01
 - 每个任务产出双重输出：直接交付物 + 可持久化的 wiki 知识。[^self]
 
 ## 引入的概念
-参见 [LLM Wiki](/concepts/llm-wiki.md)。
+参见 [LLM Wiki](../concepts/llm-wiki.md)。
 
 ## 与已有知识的关联
-与 [RAG](/concepts/rag.md) 形成对比，见 [LLM Wiki vs RAG](/comparisons/rag-vs-llm-wiki.md)。
+与 [RAG](../concepts/rag.md) 形成对比，见 [LLM Wiki vs RAG](../comparisons/rag-vs-llm-wiki.md)。
 
 [^self]: LLM Wiki Gist
 ```
